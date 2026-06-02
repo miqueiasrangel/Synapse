@@ -19,7 +19,7 @@ function Player() {
 
     const buscarDados = async () => {
       try {
-        const response = await axios.get(`${ìp}:2399/api/synapse-ti/api/dashboards/usuario/${usuarioId}`);
+        const response = await axios.get(`${ip}:2399/api/synapse-ti/api/dashboards/usuario/${usuarioId}`);
         setDashboards(response.data || []);
         setLoading(false);
       } catch (error) {
