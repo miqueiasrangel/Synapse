@@ -22,7 +22,7 @@ function Login() {
     }
 
     try {
-      const response = await axios.post(`${ip}:2399/api/api/usuarios/login`, {
+      const response = await axios.post(`${ip}:2399/api/synapse-ti/api/usuarios/login`, {
         pin: pin,
       });
 
@@ -59,7 +59,7 @@ function Login() {
     }
 
     try {
-      await axios.post(`${ìp}:2399/api/api/usuarios/cadastrar`, { pin: pin });
+      await axios.post(`${ip}:2399/api/synapse-ti/api/usuarios/cadastrar`, { pin: pin });
       setSucesso("PIN cadastrado com sucesso! Clique em Acessar.");
     } catch (error) {
       // Tratamento inteligente de erros do Cadastro
