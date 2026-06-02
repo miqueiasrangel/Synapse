@@ -1,25 +1,26 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import './Manager.css';
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import "./Manager.css";
+import { ip } from "../ip";
 
 function Manager() {
   const [dashboards, setDashboards] = useState([]);
-  const [nome, setNome] = useState(''); // <-- Novo estado para o Nome
-  const [url, setUrl] = useState('');
+  const [nome, setNome] = useState(""); // <-- Novo estado para o Nome
+  const [url, setUrl] = useState("");
   const [duracao, setDuracao] = useState(30);
-  const [erro, setErro] = useState('');
-  
+  const [erro, setErro] = useState("");
+
   const [editandoId, setEditandoId] = useState(null);
-  const [novoTempo, setNovoTempo] = useState('');
-  
+  const [novoTempo, setNovoTempo] = useState("");
+
   const navigate = useNavigate();
-  const usuarioId = localStorage.getItem('synapse_usuario_id');
-  const pin = localStorage.getItem('synapse_usuario_pin');
+  const usuarioId = localStorage.getItem("synapse_usuario_id");
+  const pin = localStorage.getItem("synapse_usuario_pin");
 
   useEffect(() => {
     if (!usuarioId) {
-      navigate('/');
+      navigate("/");
       return;
     }
     carregarDashboards();
@@ -36,7 +37,7 @@ function Manager() {
 
   const handleAdicionar = async (e) => {
     e.preventDefault();
-    setErro('');
+    setErro("");
 
     // Valida também o nome agora
     if (!nome || !url) {
@@ -45,21 +46,21 @@ function Manager() {
     }
 
     let urlTratada = url;
-    urlTratada = urlTratada.replace('datastudio.google.com', 'lookerstudio.google.com');
-    urlTratada = urlTratada.replace(/\/u\/\d+\//, '/');
-    if (urlTratada.includes('/reporting/') && !urlTratada.includes('/embed/')) {
-      urlTratada = urlTratada.replace('/reporting/', '/embed/reporting/');
+    urlTratada = urlTratada.replace("datastudio.google.com", "lookerstudio.google.com");
+    urlTratada = urlTratada.replace(/\/u\/\d+\//, "/");
+    if (urlTratada.includes("/reporting/") && !urlTratada.includes("/embed/")) {
+      urlTratada = urlTratada.replace("/reporting/", "/embed/reporting/");
     }
 
     try {
       await axios.post(`${ip}:2399/api/synapse-ti/api/dashboards/usuario/${usuarioId}`, {
         nome: nome, // <-- Envia o nome pro backend
         url: urlTratada,
-        duracaoSegundos: Number(duracao)
+        duracaoSegundos: Number(duracao),
       });
-      
-      setNome(''); // Limpa o campo
-      setUrl('');
+
+      setNome(""); // Limpa o campo
+      setUrl("");
       setDuracao(30);
       carregarDashboards();
     } catch (error) {
@@ -69,10 +70,10 @@ function Manager() {
   };
 
   const handleDelete = async (id) => {
-    if(window.confirm("Tem certeza que deseja excluir este dashboard?")) {
+    if (window.confirm("Tem certeza que deseja excluir este dashboard?")) {
       try {
         await axios.delete(`${ip}:2399/api/synapse-ti/api/dashboards/${id}`);
-        carregarDashboards(); 
+        carregarDashboards();
       } catch (error) {
         console.error("Erro ao deletar:", error);
       }
@@ -87,7 +88,7 @@ function Manager() {
   const salvarEdicao = async (id) => {
     try {
       await axios.put(`${ip}:2399/api/synapse-ti/api/dashboards/${id}/tempo`, {
-        duracaoSegundos: Number(novoTempo)
+        duracaoSegundos: Number(novoTempo),
       });
       setEditandoId(null);
       carregarDashboards();
@@ -98,18 +99,23 @@ function Manager() {
 
   const handleSair = () => {
     localStorage.clear();
-    navigate('/');
+    navigate("/");
   };
 
   return (
     <div className="manager-container">
       <header className="manager-header">
-        <h2>Synapse Workspace <span style={{fontSize: '0.9rem', color: '#94a3b8', fontWeight: 'normal'}}>| PIN: {pin}</span></h2>
+        <h2>
+          Synapse Workspace{" "}
+          <span style={{ fontSize: "0.9rem", color: "#94a3b8", fontWeight: "normal" }}>| PIN: {pin}</span>
+        </h2>
         <div className="header-buttons">
-          <button onClick={() => navigate('/player')} className="btn-play">
+          <button onClick={() => navigate("/player")} className="btn-play">
             ▶ Iniciar Player
           </button>
-          <button onClick={handleSair} className="btn-logout">Sair</button>
+          <button onClick={handleSair} className="btn-logout">
+            Sair
+          </button>
         </div>
       </header>
 
@@ -117,7 +123,6 @@ function Manager() {
         <section className="card-section">
           <h3 className="section-title">Adicionar Novo Dashboard</h3>
           <form onSubmit={handleAdicionar} className="form-group">
-            
             {/* NOVO CAMPO DE NOME */}
             <input
               type="text"
@@ -134,49 +139,54 @@ function Manager() {
               onChange={(e) => setUrl(e.target.value)}
               className="input-url"
             />
-            
+
             <div className="time-wrapper">
               <label>Tempo (s):</label>
-              <input
-                type="number"
-                value={duracao}
-                onChange={(e) => setDuracao(e.target.value)}
-                min="5"
-              />
+              <input type="number" value={duracao} onChange={(e) => setDuracao(e.target.value)} min="5" />
             </div>
-            
-            <button type="submit" className="btn-add">Adicionar</button>
+
+            <button type="submit" className="btn-add">
+              Adicionar
+            </button>
           </form>
           {erro && <p className="error-msg">{erro}</p>}
         </section>
 
         <section className="card-section">
           <h3 className="section-title">Sua Fila de Exibição ({dashboards.length})</h3>
-          
+
           {dashboards.length === 0 ? (
             <p className="empty-state">Você ainda não possui painéis configurados.</p>
           ) : (
             <div className="dash-grid">
               {dashboards.map((dash, index) => (
                 <div key={dash.id} className="dash-item">
-                  
                   <div className="dash-info">
                     <div className="dash-number">{index + 1}</div>
-                    
+
                     {editandoId === dash.id ? (
                       <div className="edit-mode-container">
-                        <input 
-                          type="number" 
-                          value={novoTempo} 
-                          onChange={(e)=> setNovoTempo(e.target.value)} 
+                        <input
+                          type="number"
+                          value={novoTempo}
+                          onChange={(e) => setNovoTempo(e.target.value)}
                           className="edit-input"
                           autoFocus
                         />
-                        <button onClick={() => salvarEdicao(dash.id)} className="btn-save">Salvar</button>
-                        <button onClick={() => setEditandoId(null)} className="btn-cancel">Cancelar</button>
+                        <button onClick={() => salvarEdicao(dash.id)} className="btn-save">
+                          Salvar
+                        </button>
+                        <button onClick={() => setEditandoId(null)} className="btn-cancel">
+                          Cancelar
+                        </button>
                       </div>
                     ) : (
-                      <span className="dash-time" style={{cursor: 'pointer'}} onClick={() => iniciarEdicao(dash)} title="Clique para editar o tempo">
+                      <span
+                        className="dash-time"
+                        style={{ cursor: "pointer" }}
+                        onClick={() => iniciarEdicao(dash)}
+                        title="Clique para editar o tempo"
+                      >
                         ⏱ {dash.duracaoSegundos}s
                       </span>
                     )}
@@ -193,9 +203,8 @@ function Manager() {
                         </a>
                       </span>
                     </div>
-
                   </div>
-                  
+
                   <div className="dash-actions">
                     {editandoId !== dash.id && (
                       <button onClick={() => iniciarEdicao(dash)} className="btn-edit">
@@ -206,7 +215,6 @@ function Manager() {
                       Excluir
                     </button>
                   </div>
-
                 </div>
               ))}
             </div>
