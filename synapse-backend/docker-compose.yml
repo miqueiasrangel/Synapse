@@ -1,0 +1,16 @@
+services:
+  synapse-ti:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: synapse-ti
+    ports:
+      - "9900:8080" # Mapeia a porta 3010 do host para a 8080 do container
+    env_file:
+      - .env
+    networks:
+      - dass_private
+
+networks:
+  dass_private:
+    external: true
