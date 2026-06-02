@@ -27,7 +27,7 @@ function Manager() {
 
   const carregarDashboards = async () => {
     try {
-      const response = await axios.get(`${ìp}:9900/api/dashboards/usuario/${usuarioId}`);
+      const response = await axios.get(`${ìp}:2399/api/api/dashboards/usuario/${usuarioId}`);
       setDashboards(response.data || []);
     } catch (error) {
       console.error("Erro ao buscar dashboards:", error);
@@ -52,7 +52,7 @@ function Manager() {
     }
 
     try {
-      await axios.post(`${ìp}:9900/api/dashboards/usuario/${usuarioId}`, {
+      await axios.post(`${ìp}:2399/api/api/dashboards/usuario/${usuarioId}`, {
         nome: nome, // <-- Envia o nome pro backend
         url: urlTratada,
         duracaoSegundos: Number(duracao)
@@ -71,7 +71,7 @@ function Manager() {
   const handleDelete = async (id) => {
     if(window.confirm("Tem certeza que deseja excluir este dashboard?")) {
       try {
-        await axios.delete(`${ìp}:9900/api/dashboards/${id}`);
+        await axios.delete(`${ìp}:2399/api/api/dashboards/${id}`);
         carregarDashboards(); 
       } catch (error) {
         console.error("Erro ao deletar:", error);
@@ -86,7 +86,7 @@ function Manager() {
 
   const salvarEdicao = async (id) => {
     try {
-      await axios.put(`${ìp}:9900/api/dashboards/${id}/tempo`, {
+      await axios.put(`${ìp}:2399/api/api/dashboards/${id}/tempo`, {
         duracaoSegundos: Number(novoTempo)
       });
       setEditandoId(null);
