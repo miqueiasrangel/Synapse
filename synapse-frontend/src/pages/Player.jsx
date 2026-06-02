@@ -19,7 +19,7 @@ function Player() {
 
     const buscarDados = async () => {
       try {
-        const response = await axios.get(`http://localhost:8080/api/dashboards/usuario/${usuarioId}`);
+        const response = await axios.get(`${ìp}:9900/api/dashboards/usuario/${usuarioId}`);
         setDashboards(response.data || []);
         setLoading(false);
       } catch (error) {
